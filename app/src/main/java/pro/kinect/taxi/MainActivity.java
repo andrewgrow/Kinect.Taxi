@@ -7,32 +7,38 @@ import android.widget.Button;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
-import pro.kinect.taxi.rest.RestAutoModel;
+import pro.kinect.taxi.db.EntityAuto;
 import pro.kinect.taxi.rest.RestManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private DisposableObserver<List<RestAutoModel>> listObserver;
+    private DisposableObserver<List<EntityAuto>> listObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listObserver = new DisposableObserver<List<RestAutoModel>>() {
+        Button btnGetData = findViewById(R.id.btnGetData);
+        btnGetData.setOnClickListener(clickedView -> {
+            RestManager.getAllAutoCoordinates(listObserver);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        listObserver = new DisposableObserver<List<EntityAuto>>() {
             @Override
-            public void onNext(List<RestAutoModel> list) {
-                Log.d(TAG, "всего: " + list.size() + " машин");
-                for (RestAutoModel autoModel : list) {
-                    Log.d(TAG, autoModel.toString());
-                }
+            public void onNext(List<EntityAuto> list) {
+                Log.d(TAG, "всего получено: " + list.size() + " машин");
+//                for (EntityAuto entityAuto : list) {
+//                    Log.d(TAG, entityAuto.toString());
+//                }
             }
 
             @Override
@@ -45,19 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-
-        Button btnGetData = findViewById(R.id.btnGetData);
-        btnGetData.setOnClickListener(clickedView -> {
-            RestManager.getAllAutoCoordinates();
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        RestManager
-                .getSubjectAutoModel()
-                .onSubscribe(listObserver);
     }
 
     @Override
