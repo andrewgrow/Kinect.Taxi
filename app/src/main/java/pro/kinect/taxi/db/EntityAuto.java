@@ -266,6 +266,10 @@ public class EntityAuto {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer::onNext);
+                .subscribe(list -> {
+                    if (observer != null) {
+                        observer.onNext(list);
+                    }
+                });
     }
 }
