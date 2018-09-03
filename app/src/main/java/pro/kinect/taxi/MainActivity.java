@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         listObserver.dispose();
+        listObserver = null;
         super.onPause();
     }
 }

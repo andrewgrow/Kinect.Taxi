@@ -242,6 +242,7 @@ public class EntityAuto {
         return "0".equals(status) ? " (свободен)" : "";
     }
 
+    @SuppressLint("CheckResult")
     public static void saveNewAuto(List<EntityAuto> autoList,
                                    DisposableObserver<List<EntityAuto>> observer) {
         Observable.fromCallable(() -> {
@@ -265,6 +266,6 @@ public class EntityAuto {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+                .subscribe(observer::onNext);
     }
 }
