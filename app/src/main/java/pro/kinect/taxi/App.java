@@ -24,6 +24,8 @@ public class App extends Application {
     public static final long jobPeriod = 1000 * 60 * 5; // 5 minutes
     private AppPrefs appPrefs;
 
+    public static final String dbName = "kinect_taxi.db";
+
     public App() {
         instance = this;
     }
@@ -32,8 +34,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        String db = "kinect_taxi.db";
-        database = Room.databaseBuilder(this, AppDatabase.class, db).build();
+        database = Room.databaseBuilder(this, AppDatabase.class, dbName).build();
 
         appPrefs = StoreBox.create(this, AppPrefs.class);
 
@@ -70,5 +71,9 @@ public class App extends Application {
 
     public AppPrefs getAppPrefs() {
         return appPrefs;
+    }
+
+    public static Context getContext() {
+        return getInstance().getApplicationContext();
     }
 }
