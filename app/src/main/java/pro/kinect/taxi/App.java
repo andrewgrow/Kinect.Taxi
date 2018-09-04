@@ -8,7 +8,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.util.Log;
 
+import net.orange_box.storebox.StoreBox;
+
 import pro.kinect.taxi.db.AppDatabase;
+import pro.kinect.taxi.db.AppPrefs;
 import pro.kinect.taxi.job.TaxiJobService;
 
 public class App extends Application {
@@ -18,7 +21,8 @@ public class App extends Application {
     private AppDatabase database;
 
     private static final int jobId = 1;
-    private static final long jobPeriod = 1000 * 60 * 5; // 5 minutes
+    public static final long jobPeriod = 1000 * 60 * 5; // 5 minutes
+    private AppPrefs appPrefs;
 
     public App() {
         instance = this;
@@ -30,6 +34,8 @@ public class App extends Application {
 
         String db = "kinect_taxi.db";
         database = Room.databaseBuilder(this, AppDatabase.class, db).build();
+
+        appPrefs = StoreBox.create(this, AppPrefs.class);
 
         planeJob();
     }
@@ -60,5 +66,9 @@ public class App extends Application {
 
     public static AppDatabase getDatabase() {
         return getInstance().database;
+    }
+
+    public AppPrefs getAppPrefs() {
+        return appPrefs;
     }
 }

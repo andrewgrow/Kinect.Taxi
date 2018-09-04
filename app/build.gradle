@@ -44,4 +44,6 @@ dependencies {
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
 
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
+
+    implementation 'net.orange-box.storebox:storebox-lib:1.4.0'
 }
