@@ -14,6 +14,6 @@ public class TaxiJobService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        return false;
+        return true;
     }
 }
