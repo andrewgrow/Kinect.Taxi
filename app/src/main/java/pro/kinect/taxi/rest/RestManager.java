@@ -87,6 +87,10 @@ public class RestManager {
         Observable.fromCallable(() -> App.getDatabase().daoAuto().getAllAuto())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer::onNext);
+                .subscribe(list -> {
+                    if (observer != null) {
+                        observer.onNext(list);
+                    }
+                });
     }
 }
