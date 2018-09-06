@@ -75,8 +75,11 @@ public class RestManager {
 
             @Override
             public void onFailure(Call<List<EntityAuto>> call, Throwable t) {
-                // something went completely south (like no internet connection)
-                Log.i(TAG, t.getMessage());
+                if (t != null && t.getMessage() != null) {
+                    Log.i(TAG, t.getMessage());
+                } else {
+                    Log.i(TAG, "something went completely south (like no internet connection)" );
+                }
                 returnAllAutoFromDB(observer);
             }
         });
