@@ -16,6 +16,17 @@
         android:theme="@style/AppTheme"
         android:name="pro.kinect.taxi.App"
         >
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/taxi_fileprovider" />
+        </provider>
+
 
         <activity
             android:name="pro.kinect.taxi.activities.MainActivity"

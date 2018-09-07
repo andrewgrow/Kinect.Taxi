@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <!-- getCacheDir() represents: -->
+    <cache-path name="cache" path="." />
+
+    <!-- Context.getExternalCacheDir() represents:  -->
+    <external-cache-path name="external-cache" path="path" />
+
+    <!-- Environment.getExternalStorageDirectory() represents: -->
+    <external-path name="external" path="path" />
+
+    <!-- Context.getExternalMediaDirs() represents: -->
+    <external-media-path name="external-media" path="path" />
+
+    <!-- Context.getFilesDir() represent: -->
+    <files-path name="files" path="path" />
+</paths>

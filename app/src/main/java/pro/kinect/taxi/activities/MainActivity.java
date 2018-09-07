@@ -1,17 +1,26 @@
 package pro.kinect.taxi.activities;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.util.List;
 
 import io.reactivex.observers.DisposableObserver;
+import pro.kinect.taxi.BuildConfig;
 import pro.kinect.taxi.R;
 import pro.kinect.taxi.db.EntityAuto;
 import pro.kinect.taxi.rest.RestManager;
+import pro.kinect.taxi.utils.FileUtils;
 import pro.kinect.taxi.utils.PermissionUtils;
+
+import static pro.kinect.taxi.App.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         btnGetData.setOnClickListener(clickedView -> {
             RestManager.getAllAutoCoordinates(listObserver);
         });
+
+        Button btnExportDb = findViewById(R.id.btnExportDb);
+        btnExportDb.setOnClickListener(exportDbListener());
     }
 
     @Override
@@ -66,5 +78,20 @@ public class MainActivity extends AppCompatActivity {
         listObserver.dispose();
         listObserver = null;
         super.onPause();
+    }
+
+    private View.OnClickListener exportDbListener() {
+        return view -> {
+            File db = FileUtils.getDatabaseFileCopy();
+            if (db != null && db.exists()) {
+                String authority = BuildConfig.APPLICATION_ID;
+                Uri pdfURI = FileProvider.getUriForFile(getContext(), authority, db);
+                Intent share = new Intent();
+                share.setAction(Intent.ACTION_SEND);
+                share.setType("application/octet-stream");
+                share.putExtra(Intent.EXTRA_STREAM, pdfURI);
+                startActivity(share);
+            }
+        };
     }
 }

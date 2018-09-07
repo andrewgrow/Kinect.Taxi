@@ -16,7 +16,10 @@ public class FileUtils {
     public static File getDatabaseFileCopy() {
         try {
             String currentDBPath = App.getContext().getDatabasePath(App.dbName).getAbsolutePath();
-            String copyDBPath = File.separator + "copy_" + App.dbName;
+            String copyDBPath = File.separator
+                    + "copy_" + DateUtils.getCurrentDateAsString(DateUtils.FILE_DATE_FORMAT) + "_"
+                    + App.dbName;
+
             File currentDB = new File(currentDBPath);
             File copyDB = new File(App.getContext().getCacheDir(), copyDBPath);
 
