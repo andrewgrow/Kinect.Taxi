@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Kinect.Taxi</string>
+    <string name="permission_not_granted_message" formatted="false">Unfortunately, %s cannot operate without your permission to %s. Please go to your App settings for %s and accept all permissions.\n\nTap \"OK\" to view App settings.</string>
+    <string name="missing_permissions">Missing Required Permissions</string>
+    <string name="alert">Alert</string>
+    <string name="ok">Ok</string>
 </resources>

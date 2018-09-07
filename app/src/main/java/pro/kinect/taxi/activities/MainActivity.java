@@ -1,4 +1,4 @@
-package pro.kinect.taxi;
+package pro.kinect.taxi.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,14 +8,17 @@ import android.widget.Button;
 import java.util.List;
 
 import io.reactivex.observers.DisposableObserver;
+import pro.kinect.taxi.R;
 import pro.kinect.taxi.db.EntityAuto;
 import pro.kinect.taxi.rest.RestManager;
+import pro.kinect.taxi.utils.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private DisposableObserver<List<EntityAuto>> listObserver;
+    private int attemptPermissionRequest = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
+
+        if (PermissionUtils.needPermissions()) {
+            PermissionRequestActivity.start(MainActivity.this);
+            return;
+        }
     }
 
     @Override
