@@ -1,7 +1,9 @@
 package pro.kinect.taxi.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final int GET_FILE_REQUEST_CODE = 1;
+
     private DisposableObserver<List<EntityAuto>> listObserver;
     private int attemptPermissionRequest = 0;
 
@@ -41,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnExportDb = findViewById(R.id.btnExportDb);
         btnExportDb.setOnClickListener(exportDbListener());
+
+        Button btnImportDb = findViewById(R.id.btnImportDb);
+        btnImportDb.setOnClickListener(importDbListener());
     }
 
     @Override
@@ -80,6 +87,28 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent resultData) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        switch (requestCode) {
+            case GET_FILE_REQUEST_CODE : {
+                Uri uri = null;
+                if (resultData != null) {
+                    uri = resultData.getData();
+                    Log.i(TAG, "Uri: " + uri.toString());
+                    if (uri.toString().contains(".db")) {
+                        FileUtils.changeDatabase(uri);
+                    }
+                }
+                break;
+            }
+            default: break;
+        }
+    }
+
     private View.OnClickListener exportDbListener() {
         return view -> {
             File db = FileUtils.getDatabaseFileCopy();
@@ -92,6 +121,12 @@ public class MainActivity extends AppCompatActivity {
                 share.putExtra(Intent.EXTRA_STREAM, pdfURI);
                 startActivity(share);
             }
+        };
+    }
+
+    private View.OnClickListener importDbListener() {
+        return view -> {
+            FileUtils.getFileFromSystem(MainActivity.this, GET_FILE_REQUEST_CODE);
         };
     }
 }

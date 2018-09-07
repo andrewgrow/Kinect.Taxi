@@ -15,6 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name="pro.kinect.taxi.App"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="true"
         >
         <provider
             android:name="android.support.v4.content.FileProvider"
