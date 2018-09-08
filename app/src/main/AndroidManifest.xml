@@ -31,7 +31,7 @@
 
 
         <activity
-            android:name="pro.kinect.taxi.activities.MainActivity"
+            android:name="pro.kinect.taxi.activities.activity_main.MainActivity"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +40,7 @@
         </activity>
 
         <activity
-            android:name="pro.kinect.taxi.activities.PermissionRequestActivity"
+            android:name="pro.kinect.taxi.activities.activity_permission_request.PermissionRequestActivity"
             />
 
         <service

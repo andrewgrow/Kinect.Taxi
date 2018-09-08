@@ -1,4 +1,4 @@
-package pro.kinect.taxi.activities;
+package pro.kinect.taxi.activities.activity_permission_request;
 
 import android.content.Intent;
 import android.os.Bundle;

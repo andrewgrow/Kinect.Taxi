@@ -4,38 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity">
+    tools:context=".activities.activity_main.MainActivity"
+    android:padding="@dimen/default_padding"
+    >
 
-    <Button
-        android:id="@+id/btnGetData"
+    <TextView
+        android:id="@+id/tvTopInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get data"
-        app:layout_constraintBottom_toTopOf="@+id/btnExportDb"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnExportDb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Export Database"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGetData"
-        app:layout_constraintBottom_toTopOf="@+id/btnImportDb"
-        />
-
-    <Button
-        android:id="@+id/btnImportDb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Import Database"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnExportDb"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Всего в БД 9999 машин"
         />
 
 </android.support.constraint.ConstraintLayout>

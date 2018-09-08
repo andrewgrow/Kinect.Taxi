@@ -4,4 +4,7 @@
     <string name="missing_permissions">Missing Required Permissions</string>
     <string name="alert">Alert</string>
     <string name="ok">Ok</string>
+    <string name="update">Update DB</string>
+    <string name="export">Export DB</string>
+    <string name="menu_import">Import DB</string>
 </resources>
