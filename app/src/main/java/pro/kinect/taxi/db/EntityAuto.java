@@ -280,9 +280,15 @@ public class EntityAuto {
     @SuppressLint("CheckResult")
     public static void returnAllAutoFromDB(@BaseResponse.Status int responseStatus,
                                             DisposableObserver<AutoListResponse> activityObserver) {
+        String status = "INTERNET FAILURE";
+        if (BaseResponse.SUCCESS == responseStatus) {
+            status = "INTERNET SUCCESS";
+        } else if (BaseResponse.LOCAL_RESPONSE == responseStatus) {
+            status = "LOCAL DATA";
+        }
+
         Log.d(TAG, "returnAllAutoFromDB -> "
-                + "status = " + (BaseResponse.isSuccess(responseStatus) ?
-                "INTERNET SUCCESS" : "INTERNET FAILURE"));
+                + "status = " + status);
         Observable.fromCallable(() -> App.getDatabase().daoAuto().getAllAuto())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
