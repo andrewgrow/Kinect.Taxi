@@ -17,6 +17,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import pro.kinect.taxi.App;
+import pro.kinect.taxi.rest.AutoListResponse;
+import pro.kinect.taxi.rest.BaseResponse;
 
 @Entity
 public class EntityAuto {
@@ -271,6 +273,23 @@ public class EntityAuto {
                     if (observer != null) {
                         Log.d(TAG, "Work with the DB was successful!");
                         observer.onComplete();
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    public static void returnAllAutoFromDB(@BaseResponse.Status int responseStatus,
+                                            DisposableObserver<AutoListResponse> activityObserver) {
+        Log.d(TAG, "returnAllAutoFromDB -> "
+                + "status = " + (BaseResponse.isSuccess(responseStatus) ?
+                "INTERNET SUCCESS" : "INTERNET FAILURE"));
+        Observable.fromCallable(() -> App.getDatabase().daoAuto().getAllAuto())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    if (activityObserver != null) {
+                        AutoListResponse response = new AutoListResponse(responseStatus, list);
+                        activityObserver.onNext(response);
                     }
                 });
     }

@@ -63,8 +63,6 @@ public class RestManager {
     }
 
     public static void getAllAutoCoordinates(DisposableObserver<AutoListResponse> activityObserver) {
-        AutoListResponse autoListResponse;
-
         Call<List<EntityAuto>> call = getApi().getAllAutoCoordinates("GetCoordinatesAllAuto");
         call.enqueue(new Callback<List<EntityAuto>>() {
             @Override
@@ -73,10 +71,12 @@ public class RestManager {
                 List<EntityAuto> list = response.body();
                 if (!response.isSuccessful() || response.body() == null) {
                     Log.i(TAG, "response in not successful! code =" + response.code());
-                    returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
+                    EntityAuto.returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
                     return;
                 }
 
+                // Success!
+                App.getInstance().getAppPrefs().setLastTimeGettingAuto(System.currentTimeMillis());
                 saveNewDataAndReturnList(list, activityObserver);
             }
 
@@ -84,7 +84,7 @@ public class RestManager {
             public void onFailure(@NonNull Call<List<EntityAuto>> call, @NonNull Throwable t) {
                 Log.i(TAG, t.getMessage() == null ?
                         "something went wrong (like no internet connection)" : t.getMessage());
-                returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
+                EntityAuto.returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
             }
         });
     }
@@ -100,32 +100,15 @@ public class RestManager {
 
             @Override
             public void onError(Throwable error) {
-                returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
+                EntityAuto.returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
             }
 
             @Override
             public void onComplete() {
-                returnAllAutoFromDB(BaseResponse.SUCCESS, activityObserver);
+                EntityAuto.returnAllAutoFromDB(BaseResponse.SUCCESS, activityObserver);
             }
         };
         // save and wait...
         EntityAuto.saveNewAuto(autoList, emitter);
-    }
-
-    @SuppressLint("CheckResult")
-    private static void returnAllAutoFromDB(@BaseResponse.Status int responseStatus,
-                                            DisposableObserver<AutoListResponse> activityObserver) {
-        Log.d(TAG, "returnAllAutoFromDB -> "
-                + "status = " + (BaseResponse.isSuccess(responseStatus) ?
-                "INTERNET SUCCESS" : "INTERNET FAILURE"));
-        Observable.fromCallable(() -> App.getDatabase().daoAuto().getAllAuto())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> {
-                    if (activityObserver != null) {
-                        AutoListResponse response = new AutoListResponse(responseStatus, list);
-                        activityObserver.onNext(response);
-                    }
-                });
     }
 }

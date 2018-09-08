@@ -14,11 +14,14 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import io.reactivex.observers.DisposableObserver;
+import pro.kinect.taxi.App;
 import pro.kinect.taxi.BuildConfig;
 import pro.kinect.taxi.db.EntityAuto;
 import pro.kinect.taxi.interfaces.ActivityCallback;
 import pro.kinect.taxi.rest.AutoListResponse;
+import pro.kinect.taxi.rest.BaseResponse;
 import pro.kinect.taxi.rest.RestManager;
+import pro.kinect.taxi.utils.DateUtils;
 import pro.kinect.taxi.utils.FileUtils;
 
 import static pro.kinect.taxi.App.getContext;
@@ -63,17 +66,38 @@ public class MainActivityPresenter implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private void onResume() {
-        updateDb();
+        EntityAuto.returnAllAutoFromDB(BaseResponse.LOCAL_RESPONSE, listObserver);
     }
 
     private static void makeNewObservers() {
         listObserver = new DisposableObserver<AutoListResponse>() {
             @Override
             public void onNext(AutoListResponse response) {
-
-                if (getActivity() != null && response != null && response.getAutoList() != null) {
-                    getActivity().setTopInfoText("Всего в БД " + response.getAutoList().size() + " машин");
+                if (response == null) {
+                    return;
                 }
+
+                MainActivity activity = getActivity();
+                if (activity == null) {
+                    return;
+                }
+
+                String lastUpdate =
+                        "Последнее удачное обновление было: " + DateUtils.getDateAsString(
+                        App.getInstance().getAppPrefs().getLastTimeGettingAuto(),
+                        DateUtils.DATE_FORMAT_STANDART) + " ";
+
+                String success = response.isSuccess() ?
+                        "Обновление БД выполнено успешно. " : response.getStatus() == BaseResponse.FAILURE ?
+                        "Связаться с сервером не удалось. " + lastUpdate :
+                        " Локальный список из БД. " + lastUpdate;
+
+                String listData = "";
+                if (response.getAutoList() != null) {
+                    listData = "Сейчас в БД " + response.getAutoList().size() + " машин";
+                }
+
+                activity.setTopInfoText(success + listData);
 
             }
 

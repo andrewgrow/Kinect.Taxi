@@ -10,6 +10,8 @@ import android.util.Log;
 
 import net.orange_box.storebox.StoreBox;
 
+import java.util.concurrent.TimeUnit;
+
 import pro.kinect.taxi.db.AppDatabase;
 import pro.kinect.taxi.db.AppPrefs;
 import pro.kinect.taxi.job.TaxiJobService;
@@ -21,7 +23,7 @@ public class App extends Application {
     private AppDatabase database;
 
     private static final int jobId = 1;
-    public static final long jobPeriod = 1000 * 60 * 5; // 5 minutes
+    public static final long jobPeriod = TimeUnit.MINUTES.toMillis(15); // 15 minutes
     private AppPrefs appPrefs;
 
     public static final String dbName = "kinect_taxi.db";

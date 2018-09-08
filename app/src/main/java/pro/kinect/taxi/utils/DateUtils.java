@@ -16,6 +16,11 @@ public class DateUtils {
     public static final String DATE_FORMAT_MM_DD_YYYY = "MM/dd/yyyy";
     public static final String FILE_DATE_FORMAT = "yyyyMMdd_HHmm";
 
+    public static String getDateAsString(long date, @DateFormat String format) {
+        final SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+        return sdf.format(new Date(date));
+    }
+
     @StringDef({DATE_FORMAT, TIME_FORMAT, DATE_FORMAT_STANDART, DATE_FORMAT_MM_DD_YYYY, FILE_DATE_FORMAT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface DateFormat {}
