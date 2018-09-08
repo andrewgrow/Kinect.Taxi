@@ -11,6 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import io.reactivex.Emitter;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
@@ -243,9 +244,9 @@ public class EntityAuto {
     }
 
     @SuppressLint("CheckResult")
-    public static void saveNewAuto(List<EntityAuto> autoList,
-                                   DisposableObserver<List<EntityAuto>> observer) {
+    public static void saveNewAuto(List<EntityAuto> autoList, Emitter<Boolean> observer) {
         Observable.fromCallable(() -> {
+                    Log.d(TAG, "Browsing the list of cars that got from the server ...");
                     DaoAuto dao = App.getDatabase().daoAuto();
                     int existAuto = 0;
                     int newAuto = 0;
@@ -268,7 +269,8 @@ public class EntityAuto {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
                     if (observer != null) {
-                        observer.onNext(list);
+                        Log.d(TAG, "Work with the DB was successful!");
+                        observer.onComplete();
                     }
                 });
     }

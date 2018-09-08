@@ -18,24 +18,23 @@ import io.reactivex.observers.DisposableObserver;
 import pro.kinect.taxi.R;
 import pro.kinect.taxi.activities.activity_permission_request.PermissionRequestActivity;
 import pro.kinect.taxi.db.EntityAuto;
+import pro.kinect.taxi.interfaces.ActivityCallback;
 import pro.kinect.taxi.utils.PermissionUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ActivityCallback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
     protected static final int GET_FILE_REQUEST_CODE = 1;
 
-    private DisposableObserver<List<EntityAuto>> listObserver;
-    private TextView tvTopInfo;
     private MainActivityPresenter presenter;
+    private TextView tvTopInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        presenter = MainActivityPresenter.getInstance();
+        presenter = MainActivityPresenter.getInstance(MainActivity.this);
         getLifecycle().addObserver(presenter);
 
         initUI();
@@ -45,47 +44,17 @@ public class MainActivity extends AppCompatActivity {
         tvTopInfo = findViewById(R.id.tvTopInfo);
     }
 
+    @Override
+    public AppCompatActivity getActivity() {
+        return this;
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        makeNewObservers();
-
         if (PermissionUtils.needPermissions()) {
             PermissionRequestActivity.start(MainActivity.this);
         }
-    }
-
-    private void makeNewObservers() {
-        listObserver = new DisposableObserver<List<EntityAuto>>() {
-            @Override
-            public void onNext(List<EntityAuto> list) {
-                tvTopInfo.setText("Всего в БД " + list.size() + " машин");
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        };
-    }
-
-    @Override
-    protected void onPause() {
-        disposeAllObservers();
-        super.onPause();
-    }
-
-    private void disposeAllObservers() {
-        listObserver.dispose();
-        listObserver = null;
     }
 
     @Override
@@ -121,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (R.id.menu_update == id) {
-            presenter.updateDb(listObserver);
+            presenter.updateDb();
             return true;
         } else if (R.id.menu_export == id) {
             presenter.exportDB(MainActivity.this);
@@ -131,5 +100,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setTopInfoText(String text) {
+        tvTopInfo.setText(text);
     }
 }
