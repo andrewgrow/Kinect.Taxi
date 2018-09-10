@@ -71,7 +71,7 @@ public class RestManager {
                 List<EntityAuto> list = response.body();
                 if (!response.isSuccessful() || response.body() == null) {
                     Log.i(TAG, "response in not successful! code =" + response.code());
-                    EntityAuto.returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
+                    EntityAuto.getCachedAutoResponse(BaseResponse.FAILURE, activityObserver);
                     return;
                 }
 
@@ -84,7 +84,7 @@ public class RestManager {
             public void onFailure(@NonNull Call<List<EntityAuto>> call, @NonNull Throwable t) {
                 Log.i(TAG, t.getMessage() == null ?
                         "something went wrong (like no internet connection)" : t.getMessage());
-                EntityAuto.returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
+                EntityAuto.getCachedAutoResponse(BaseResponse.FAILURE, activityObserver);
             }
         });
     }
@@ -100,12 +100,12 @@ public class RestManager {
 
             @Override
             public void onError(Throwable error) {
-                EntityAuto.returnAllAutoFromDB(BaseResponse.FAILURE, activityObserver);
+                EntityAuto.getCachedAutoResponse(BaseResponse.FAILURE, activityObserver);
             }
 
             @Override
             public void onComplete() {
-                EntityAuto.returnAllAutoFromDB(BaseResponse.SUCCESS, activityObserver);
+                EntityAuto.getCachedAutoResponse(BaseResponse.SUCCESS, activityObserver);
             }
         };
         // save and wait...

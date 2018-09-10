@@ -8,7 +8,6 @@
         android:id="@+id/menu_update"
         android:icon="@drawable/ic_icon_update"
         android:title="@string/update"
-
         />
 
 

@@ -5,15 +5,25 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.reactivestreams.Subscription;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Emitter;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableSubscriber;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import pro.kinect.taxi.App;
@@ -278,7 +288,7 @@ public class EntityAuto {
     }
 
     @SuppressLint("CheckResult")
-    public static void returnAllAutoFromDB(@BaseResponse.Status int responseStatus,
+    public static void getCachedAutoResponse(@BaseResponse.Status int responseStatus,
                                             DisposableObserver<AutoListResponse> activityObserver) {
         String status = "INTERNET FAILURE";
         if (BaseResponse.SUCCESS == responseStatus) {
@@ -298,5 +308,52 @@ public class EntityAuto {
                         activityObserver.onNext(response);
                     }
                 });
+    }
+
+    public static void searchAuto(@Nullable final String request,
+                                  DisposableObserver<List<EntityAuto>> autoObserver) {
+        if (autoObserver == null) {
+            return;
+        }
+
+        // result
+        List<EntityAuto> result = new ArrayList<>();
+
+        if (request == null) {
+            autoObserver.onNext(result);
+            return;
+        }
+
+        // complete result
+        Observer<EntityAuto> entityAutoObserver = new Observer<EntityAuto>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                // nothing for now
+            }
+
+            @Override
+            public void onNext(EntityAuto auto) {
+                result.add(auto);
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                // nothing for now
+            }
+
+            @Override
+            public void onComplete() {
+                // when we have received all autos
+                autoObserver.onNext(result);
+            }
+        };
+
+        // getting autos
+        Observable.fromCallable(() -> App.getDatabase().daoAuto().searchAuto(request))
+                .flatMap(Observable::fromIterable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(entityAutoObserver);
+
     }
 }

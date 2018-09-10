@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -28,9 +31,13 @@ import static pro.kinect.taxi.App.getContext;
 
 public class MainActivityPresenter implements LifecycleObserver {
 
+    private static final String TAG = MainActivityPresenter.class.getSimpleName();
+
     private static MainActivityPresenter instance;
-    private static DisposableObserver<AutoListResponse> listObserver;
+    private DisposableObserver<AutoListResponse> listObserver;
+    private DisposableObserver<List<EntityAuto>> searchAutoObserver;
     private WeakReference<ActivityCallback> weakCallbackReference;
+    private TextWatcher mTextWatcher;
 
     private MainActivityPresenter() {
         // private constructor
@@ -40,7 +47,7 @@ public class MainActivityPresenter implements LifecycleObserver {
     public static MainActivityPresenter getInstance(ActivityCallback callback) {
         if (instance == null) {
             instance = new MainActivityPresenter();
-            makeNewObservers();
+            instance.makeNewObservers();
         }
         if (callback != null) {
             instance.weakCallbackReference = new WeakReference<>(callback);
@@ -66,10 +73,10 @@ public class MainActivityPresenter implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private void onResume() {
-        EntityAuto.returnAllAutoFromDB(BaseResponse.LOCAL_RESPONSE, listObserver);
+        EntityAuto.getCachedAutoResponse(BaseResponse.LOCAL_RESPONSE, listObserver);
     }
 
-    private static void makeNewObservers() {
+    private void makeNewObservers() {
         listObserver = new DisposableObserver<AutoListResponse>() {
             @Override
             public void onNext(AutoListResponse response) {
@@ -99,6 +106,27 @@ public class MainActivityPresenter implements LifecycleObserver {
 
                 activity.setTopInfoText(success + listData);
 
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
+        searchAutoObserver = new DisposableObserver<List<EntityAuto>>() {
+            @Override
+            public void onNext(List<EntityAuto> autoList) {
+                MainActivity activity = getActivity();
+                if (activity == null || autoList == null) {
+                    return;
+                }
+                activity.searchResult(autoList);
             }
 
             @Override
@@ -141,5 +169,29 @@ public class MainActivityPresenter implements LifecycleObserver {
         if (uri.toString().contains(".db")) {
             FileUtils.changeDatabase(uri);
         }
+    }
+
+    public TextWatcher getSearchTextWatcher() {
+        if (mTextWatcher == null) {
+            mTextWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    String result = editable.toString().toLowerCase();
+                    Log.d(TAG, "editText = " + result);
+                    EntityAuto.searchAuto(result, searchAutoObserver);
+                }
+            };
+        }
+        return mTextWatcher;
     }
 }

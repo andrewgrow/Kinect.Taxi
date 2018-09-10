@@ -7,11 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.observers.DisposableObserver;
@@ -28,6 +33,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCallback 
 
     private MainActivityPresenter presenter;
     private TextView tvTopInfo;
+    private EditText etSearch;
+    private RecyclerView mRecyclerView;
+    private SearchResultAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCallback 
 
     private void initUI() {
         tvTopInfo = findViewById(R.id.tvTopInfo);
+        etSearch = findViewById(R.id.etSearch);
+        etSearch.addTextChangedListener(presenter.getSearchTextWatcher());
+        mRecyclerView = findViewById(R.id.searchResult);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new SearchResultAdapter();
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -104,5 +119,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCallback 
 
     public void setTopInfoText(String text) {
         tvTopInfo.setText(text);
+    }
+
+    public void searchResult(List<EntityAuto> autoList) {
+        if (autoList == null) {
+            autoList = new ArrayList<>();
+        }
+        Log.d(TAG, "searchResult! autoList.size() = " + autoList.size());
+        mAdapter.replaceItems(autoList);
     }
 }

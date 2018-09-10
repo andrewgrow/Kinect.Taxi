@@ -19,6 +19,13 @@ public interface DaoAuto {
     @Query("SELECT * FROM EntityAuto")
     Flowable<EntityAuto> getFlowableAllAuto();
 
+    @Query("SELECT * FROM EntityAuto" +
+            " where statenumber like '%' || :request || '%'"
+            + " or drivename like '%' || :request || '%'"
+            + " or driverphone like '%' || :request || '%'"
+    )
+    List<EntityAuto> searchAuto(String request);
+
     @Query("SELECT * from EntityAuto where id = :id LIMIT 1")
     Flowable<EntityAuto> getAutoById(int id);
 
