@@ -15,6 +15,16 @@ import pro.kinect.taxi.db.EntityAuto;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
 
+    private OnClickListener clickListener;
+
+    public EntityAuto getAuto(int adapterPosition) {
+        return items.get(adapterPosition);
+    }
+
+    interface OnClickListener {
+        void onItemClicked(int adapterPosition);
+    }
+
     private List<EntityAuto> items = new ArrayList<>();
 
     public void replaceItems(@NonNull List<EntityAuto> newList) {
@@ -23,12 +33,20 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         notifyDataSetChanged();
     }
 
+    public void setOnClickListener(OnClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_search_result, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, adapterPosition -> {
+            if (clickListener != null) {
+                clickListener.onItemClicked(adapterPosition);
+            }
+        });
     }
 
     @Override
@@ -53,9 +71,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvInfo;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, final OnClickListener clickListener) {
             super(itemView);
             tvInfo = itemView.findViewById(R.id.tvInfo);
+            itemView.setOnClickListener(v -> clickListener.onItemClicked(getAdapterPosition()));
         }
     }
 }

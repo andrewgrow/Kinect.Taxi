@@ -3,6 +3,7 @@ package pro.kinect.taxi.activities.activity_main;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ import pro.kinect.taxi.db.EntityAuto;
 import pro.kinect.taxi.interfaces.ActivityCallback;
 import pro.kinect.taxi.utils.PermissionUtils;
 
-public class MainActivity extends AppCompatActivity implements ActivityCallback {
+public class MainActivity extends AppCompatActivity implements ActivityCallback, SearchResultAdapter.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     protected static final int GET_FILE_REQUEST_CODE = 1;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCallback 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new SearchResultAdapter();
+        mAdapter.setOnClickListener(MainActivity.this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -127,5 +129,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCallback 
         }
         Log.d(TAG, "searchResult! autoList.size() = " + autoList.size());
         mAdapter.replaceItems(autoList);
+    }
+
+    @Override
+    public void onItemClicked(int adapterPosition) {
+        EntityAuto auto = mAdapter.getAuto(adapterPosition);
+        Log.d(TAG, "clicked position " + auto.toString());
+        Log.d(TAG, "phone " + auto.getDriverPhone());
+
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + auto.getDriverPhone()));
+        startActivity(intent);
     }
 }

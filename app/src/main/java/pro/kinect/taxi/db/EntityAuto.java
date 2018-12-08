@@ -269,6 +269,7 @@ public class EntityAuto {
                             Log.d(TAG, "create new auto! " + id + ", " + restAuto.getStateNumber());
                             newAuto++;
                         } else {
+                            dao.update(restAuto);
                             existAuto++;
                         }
                     }
