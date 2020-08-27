@@ -23,6 +23,7 @@ public interface DaoAuto {
             " where statenumber like '%' || :request || '%'"
             + " or drivename like '%' || :request || '%'"
             + " or driverphone like '%' || :request || '%'"
+            + " or carbrand like '%' || :request || '%'"
     )
     List<EntityAuto> searchAuto(String request);
 
